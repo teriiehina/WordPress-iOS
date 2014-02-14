@@ -24,14 +24,26 @@ static NSString * const WordPressComOAuthRedirectUrl = @"https://wordpress.com/"
     return client;
 }
 
-- (void)authenticateWithUsername:(NSString *)username password:(NSString *)password success:(void (^)(NSString *authToken))success failure:(void (^)(NSError *error))failure {
+- (void)authenticateWithUsername:(NSString *)username password:(NSString *)password success:(void (^)(NSString *))success failure:(void (^)(NSError *))failure {
+    [self authenticateWithUsername:username password:password otp:nil success:success failure:failure];
+}
+
+- (void)authenticateWithUsername:(NSString *)username password:(NSString *)password otp:(NSString *)otp success:(void (^)(NSString *authToken))success failure:(void (^)(NSError *error))failure {
     NSDictionary *parameters = @{
                                  @"username": username,
                                  @"password": password,
                                  @"grant_type": @"password",
                                  @"client_id": [WordPressComApiCredentials client],
                                  @"client_secret": [WordPressComApiCredentials secret],
+                                 @"wpcom_supports_2fa": @YES,
                                  };
+
+    if ([otp length] > 0) {
+        NSMutableDictionary *mutableParameters = [parameters mutableCopy];
+        mutableParameters[@"wpcom_otp"] = otp;
+        parameters = [NSDictionary dictionaryWithDictionary:mutableParameters];
+    }
+
     [self postPath:@"token"
         parameters:parameters
            success:^(AFHTTPRequestOperation *operation, id responseObject) {
@@ -75,6 +87,10 @@ static NSString * const WordPressComOAuthRedirectUrl = @"https://wordpress.com/"
                 code = WordPressComOAuthErrorUnsupportedGrantType;
             } else if ([errorCode isEqualToString:@"invalid_request"]) {
                 code = WordPressComOAuthErrorInvalidRequest;
+            } else if ([errorCode isEqualToString:@"needs_2fa"]) {
+                code = WordPressComOAuthErrorNeedsTwoStep;
+            } else if ([errorCode isEqualToString:@"invalid_otp"]) {
+                code = WordPressComOAuthErrorInvalidOTP;
             }
             return [NSError errorWithDomain:WordPressComOAuthErrorDomain code:code userInfo:@{NSLocalizedDescriptionKey: errorDescription}];
         }

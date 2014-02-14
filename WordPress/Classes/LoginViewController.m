@@ -27,9 +27,11 @@
 #import "WPNUXBackButton.h"
 #import "WPAccount.h"
 #import "Note.h"
+#import "OTPPromptViewController.h"
 
 @interface LoginViewController () <
-    UITextFieldDelegate> {
+    UITextFieldDelegate,
+    OTPPromptViewControllerDelegate> {
         
     // Views
     UIView *_mainView;
@@ -51,8 +53,10 @@
     BOOL _userIsDotCom;
     BOOL _blogConnectedToJetpack;
     NSString *_dotComSiteUrl;
+    NSString *_oneTimePassword;
     NSArray *_blogs;
     Blog *_blog;
+    OTPPromptViewController *_otpPromptViewController;
 }
 
 @end
@@ -164,6 +168,20 @@ CGFloat const GeneralWalkthroughStatusBarOffset = 20.0;
     _signInButton.enabled = isUsernameFilled && isPasswordFilled && (_userIsDotCom || isSiteUrlFilled);
     
     return YES;
+}
+
+#pragma mark - OTP Prompt Delegate
+
+- (void)promptDidCancel:(OTPPromptViewController *)prompt
+{
+    _oneTimePassword = nil;
+    [self.navigationController popToViewController:self animated:YES];
+}
+
+- (void)prompt:(OTPPromptViewController *)prompt didEnterPassword:(NSString *)oneTimePassword
+{
+    _oneTimePassword = oneTimePassword;
+    [self signIn];
 }
 
 #pragma mark - Displaying of Error Messages
@@ -563,6 +581,14 @@ CGFloat const GeneralWalkthroughStatusBarOffset = 20.0;
     [self.navigationController pushViewController:createAccountViewController animated:YES];
 }
 
+- (void)showOTPPromptView
+{
+    _otpPromptViewController = [OTPPromptViewController new];
+    _otpPromptViewController.delegate = self;
+    [self.navigationController popToViewController:self animated:NO];
+    [self.navigationController pushViewController:_otpPromptViewController animated:YES];
+}
+
 - (void)showJetpackAuthentication
 {
     [self setAuthenticating:NO withStatusMessage:nil];
@@ -752,20 +778,43 @@ CGFloat const GeneralWalkthroughStatusBarOffset = 20.0;
     WordPressComOAuthClient *client = [WordPressComOAuthClient client];
     [client authenticateWithUsername:username
                             password:password
+                                 otp:_oneTimePassword
                              success:^(NSString *authToken) {
+                                 if (_oneTimePassword) {
+                                     [self.navigationController popToViewController:self animated:YES];
+                                 }
                                  [self setAuthenticating:NO withStatusMessage:nil];
                                  _userIsDotCom = YES;
                                  [self createWordPressComAccountForUsername:username password:password authToken:authToken];
                              } failure:^(NSError *error) {
                                  [self setAuthenticating:NO withStatusMessage:nil];
-                                 [self displayRemoteError:error];
+                                 if ([error.domain isEqual:WordPressComOAuthErrorDomain] && error.code == WordPressComOAuthErrorNeedsTwoStep) {
+                                     [self showOTPPromptView];
+                                 } else {
+                                     if (_oneTimePassword) {
+                                         _oneTimePassword = nil;
+                                         if ([error.domain isEqual:WordPressComOAuthErrorDomain] && error.code == WordPressComOAuthErrorInvalidOTP) {
+                                             [_otpPromptViewController resetAuthenticationState];
+                                             UIAlertView *alert = [[UIAlertView alloc] initWithTitle:NSLocalizedString(@"Sorry, we can't log you in.", nil)
+                                                                                             message:NSLocalizedString(@"Invalid verification code", nil)
+                                                                                            delegate:nil
+                                                                                   cancelButtonTitle:NSLocalizedString(@"OK", nil)
+                                                                                   otherButtonTitles:nil];
+                                             [alert show];
+                                             return;
+                                         }
+                                         
+                                         [self.navigationController popToViewController:self animated:NO];
+                                     }
+                                     [self displayRemoteError:error];
+                                 }
                              }];
 }
 
 - (void)createWordPressComAccountForUsername:(NSString *)username password:(NSString *)password authToken:(NSString *)authToken
 {
     [self setAuthenticating:YES withStatusMessage:NSLocalizedString(@"Getting account information", nil)];
-    WPAccount *account = [WPAccount createOrUpdateWordPressComAccountWithUsername:username password:password authToken:authToken];
+    WPAccount *account = [WPAccount createOrUpdateWordPressComAccountWithUsername:username password:nil authToken:authToken];
     if (![WPAccount defaultWordPressComAccount]) {
         [WPAccount setDefaultWordPressComAccount:account];
     }
