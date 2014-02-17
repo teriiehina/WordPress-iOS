@@ -14,7 +14,7 @@
 @property (nonatomic, weak) id<OTPPromptViewControllerDelegate> delegate;
 
 /**
- Stops any activitiy indicator and resets the view controller to asking for a code again
+ Stops any activity indicator and resets the view controller to asking for a code again
  */
 - (void)resetAuthenticationState;
 @end
