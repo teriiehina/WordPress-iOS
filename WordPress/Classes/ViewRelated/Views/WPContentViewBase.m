@@ -42,9 +42,9 @@ const CGFloat WPContentViewLineHeightMultiple = 1.03;
     self.delegate = nil;
 }
 
-- (instancetype)init
+- (instancetype)initWithFrame:(CGRect)frame
 {
-    self = [super init];
+    self = [super initWithFrame:frame];
     if (self) {
         self.labelsNeedingPreferredMaxLayoutWidth = [NSMutableArray array];
         [self constructSubviews];
@@ -284,7 +284,7 @@ const CGFloat WPContentViewLineHeightMultiple = 1.03;
 {
     UIView *borderView = [[UIView alloc] init];
     borderView.translatesAutoresizingMaskIntoConstraints = NO;
-    borderView.backgroundColor = [UIColor colorWithRed:241.0/255.0 green:241.0/255.0 blue:241.0/255.0 alpha:1.0];
+    borderView.backgroundColor = [UIColor colorWithRed:232.0/255.0 green:240.0/255.0 blue:245.0/255.0 alpha:1.0];
     return borderView;
 }
 

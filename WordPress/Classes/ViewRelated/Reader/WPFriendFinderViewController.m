@@ -24,15 +24,13 @@ static NSString *const SourceFacebook = @"Facebook";
 - (void)viewDidLoad {
     [super viewDidLoad];
     
-    [self loadURL:kMobileReaderFFURL];
+    [self loadURL:WPMobileReaderFFURL];
     
     // register for a notification
     NSNotificationCenter *nc = [NSNotificationCenter defaultCenter];
     [nc addObserver:self selector:@selector(facebookDidLogIn:) name:FacebookLoginNotificationName object:nil];
     [nc addObserver:self selector:@selector(facebookDidNotLogIn:) name:FacebookNoLoginNotificationName object:nil];
-    self.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemDone
-                                                                                           target:self
-                                                                                           action:@selector(dismissFriendFinder:)];
+    
     self.activityView = [[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleGray];
     self.activityView.autoresizingMask = UIViewAutoresizingFlexibleTopMargin | UIViewAutoresizingFlexibleRightMargin | UIViewAutoresizingFlexibleBottomMargin | UIViewAutoresizingFlexibleLeftMargin;
     CGRect f1 = self.activityView.frame;
@@ -47,10 +45,6 @@ static NSString *const SourceFacebook = @"Facebook";
 - (void)dealloc {
     [[NSNotificationCenter defaultCenter] removeObserver:self];
     self.activityView = nil;
-}
-
-- (void)dismissFriendFinder:(id)sender {
-    [self.navigationController dismissViewControllerAnimated:YES completion:nil];
 }
 
 - (void)configureFriendFinder:(id)config {
