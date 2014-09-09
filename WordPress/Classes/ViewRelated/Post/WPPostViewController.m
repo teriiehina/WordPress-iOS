@@ -18,7 +18,9 @@
 #import "WPMediaUploader.h"
 #import "WPButtonForNavigationBar.h"
 #import "WPUploadStatusView.h"
-
+#import "SuggestionService.h"
+#import "SuggestionsTableViewController.h"
+#import "MentionDelegate.h"
 
 NSString *const WPEditorNavigationRestorationID = @"WPEditorNavigationRestorationID";
 NSString *const WPAbstractPostRestorationKey = @"WPAbstractPostRestorationKey";
@@ -31,7 +33,7 @@ NSString *const kWPEditorConfigURLParamEnabled = @"enabled";
 
 static NSInteger const MaximumNumberOfPictures = 5;
 
-@interface WPPostViewController ()<UIPopoverControllerDelegate> {
+@interface WPPostViewController ()<UIPopoverControllerDelegate, SuggestionsTableViewDelegate> {
     NSOperationQueue *_mediaUploadQueue;
 }
 
@@ -441,7 +443,7 @@ static NSInteger const MaximumNumberOfPictures = 5;
 }
 
 + (BOOL)isNewEditorEnabled
-{    
+{
     return [[NSUserDefaults standardUserDefaults] boolForKey:kUserDefaultsNewEditorEnabled];
 }
 
@@ -1205,6 +1207,33 @@ static NSInteger const MaximumNumberOfPictures = 5;
 - (void)editorDidPressPreview:(WPEditorViewController *)editorController
 {
     [self showPreview];
+}
+
+- (void)editorDidStartMention:(WPEditorViewController *)editorController
+{
+    NSNumber *siteID = self.post.blog.blogID;
+
+    NSManagedObjectContext *context = [[ContextManager sharedInstance] mainContext];
+    BlogService *service = [[BlogService alloc] initWithManagedObjectContext:context];
+    Blog *blog = [service blogByBlogId:siteID];
+    if (blog && blog.isWPcom && [[SuggestionService shared] shouldShowSuggestionsPageForSiteID:siteID]) {
+        SuggestionsTableViewController *suggestionsController = [[SuggestionsTableViewController alloc] initWithSiteID:siteID];
+        suggestionsController.delegate = self;
+        [self.navigationController pushViewController:suggestionsController animated:YES];
+    }
+}
+
+#pragma mark - SuggestionsTableViewDelegate
+
+- (void)suggestionTableView:(SuggestionsTableViewController *)suggestionsTableViewController
+            didSelectString:(NSString *)string
+{
+    // TODO : Add the mention link to the editor
+}
+
+- (void)suggestionViewDidDisappear:(SuggestionsTableViewController *)suggestionsTableViewController
+{
+    // TODO : Clean up / set focus correctly
 }
 
 #pragma mark - CTAssetsPickerController delegate
