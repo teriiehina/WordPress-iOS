@@ -1790,7 +1790,7 @@ typedef enum
 
 - (void)editorView:(WPEditorView*)editorView subscribedKeyPressed:(int)keyCode
 {
-    if ([self.delegate respondsToSelector: @selector(editorDidStartMention:)]) {
+    if ([self.delegate respondsToSelector:@selector(editorDidStartMention:)]) {
         [self.delegate editorDidStartMention:self];
     }
 }

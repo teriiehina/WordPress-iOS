@@ -60,8 +60,7 @@
  *	@return		YES if the keyCode was handled by the receiver and default handler should be supressed,
  *				NO if it wasn't.
  */
-- (BOOL)editorView:(WPEditorView*)editorView
-        subscribedKeyPressed:(int)keyCode;
+- (BOOL)editorView:(WPEditorView*)editorView subscribedKeyPressed:(int)keyCode;
 
 /**
  *	@brief		Received when the selection is changed.
