@@ -1255,6 +1255,9 @@ static NSUInteger const kWPPostViewControllerSaveOnExitActionSheetTag = 201;
         [self insertLinkWithText:url text:text];
         
         self.selectedSuggestion = nil;
+    } else {
+        // they decided not to pick a name - insert an @ in the editor since we consumed the key
+        [self insertText:@"@"];
     }
 }
 
