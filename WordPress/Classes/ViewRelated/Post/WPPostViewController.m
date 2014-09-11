@@ -1209,17 +1209,20 @@ static NSInteger const MaximumNumberOfPictures = 5;
     [self showPreview];
 }
 
-- (void)editorDidStartMention:(WPEditorViewController *)editorController
+- (void)editorDidStartTerm:(WPEditorViewController *)editorController keyCode:(int)keyCode
 {
-    NSNumber *siteID = self.post.blog.blogID;
+    if (64 == keyCode) { // @mentions    
+        NSNumber *siteID = self.post.blog.blogID;
 
-    NSManagedObjectContext *context = [[ContextManager sharedInstance] mainContext];
-    BlogService *service = [[BlogService alloc] initWithManagedObjectContext:context];
-    Blog *blog = [service blogByBlogId:siteID];
-    if (blog && blog.isWPcom && [[SuggestionService shared] shouldShowSuggestionsPageForSiteID:siteID]) {
-        SuggestionsTableViewController *suggestionsController = [[SuggestionsTableViewController alloc] initWithSiteID:siteID];
-        suggestionsController.delegate = self;
-        [self.navigationController pushViewController:suggestionsController animated:YES];
+        NSManagedObjectContext *context = [[ContextManager sharedInstance] mainContext];
+        BlogService *service = [[BlogService alloc] initWithManagedObjectContext:context];
+        Blog *blog = [service blogByBlogId:siteID];
+        if (blog && blog.isWPcom && [[SuggestionService shared] shouldShowSuggestionsPageForSiteID:siteID]) {
+            [self dismissAlertView];
+            SuggestionsTableViewController *suggestionsController = [[SuggestionsTableViewController alloc] initWithSiteID:siteID];
+            suggestionsController.delegate = self;
+            [self.navigationController pushViewController:suggestionsController animated:YES];
+        }
     }
 }
 
@@ -1228,12 +1231,19 @@ static NSInteger const MaximumNumberOfPictures = 5;
 - (void)suggestionTableView:(SuggestionsTableViewController *)suggestionsTableViewController
             didSelectString:(NSString *)string
 {
-    // TODO : Add the mention link to the editor
+    // Build the URL
+    NSString *url = [self.post.blog urlWithPath:[NSString stringWithFormat:@"mentions/%@/", string]];
+
+    // Build the linked text
+    NSString *text = [NSString stringWithFormat:@"@%@", string];
+
+    [self insertLinkWithText:url text:text];
 }
 
 - (void)suggestionViewDidDisappear:(SuggestionsTableViewController *)suggestionsTableViewController
 {
-    // TODO : Clean up / set focus correctly
+    // set focus on editor
+    
 }
 
 #pragma mark - CTAssetsPickerController delegate
