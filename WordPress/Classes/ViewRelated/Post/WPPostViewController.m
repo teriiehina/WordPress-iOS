@@ -1218,7 +1218,6 @@ static NSInteger const MaximumNumberOfPictures = 5;
         BlogService *service = [[BlogService alloc] initWithManagedObjectContext:context];
         Blog *blog = [service blogByBlogId:siteID];
         if (blog && blog.isWPcom && [[SuggestionService shared] shouldShowSuggestionsPageForSiteID:siteID]) {
-            [self dismissAlertView];
             SuggestionsTableViewController *suggestionsController = [[SuggestionsTableViewController alloc] initWithSiteID:siteID];
             suggestionsController.delegate = self;
             [self.navigationController pushViewController:suggestionsController animated:YES];
