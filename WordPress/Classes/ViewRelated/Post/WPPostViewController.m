@@ -45,6 +45,7 @@ static NSUInteger const kWPPostViewControllerSaveOnExitActionSheetTag = 201;
 @property (nonatomic, strong) UIBarButtonItem *cancelButton;
 @property (nonatomic) BOOL dismissingBlogPicker;
 @property (nonatomic) CGPoint scrollOffsetRestorePoint;
+@property (nonatomic) NSMutableString *selectedSuggestion;
 
 @end
 
@@ -1225,6 +1226,7 @@ static NSUInteger const kWPPostViewControllerSaveOnExitActionSheetTag = 201;
         BlogService *service = [[BlogService alloc] initWithManagedObjectContext:context];
         Blog *blog = [service blogByBlogId:siteID];
         if (blog && blog.isWPcom && [[SuggestionService shared] shouldShowSuggestionsPageForSiteID:siteID]) {
+            self.selectedSuggestion = nil;
             SuggestionsTableViewController *suggestionsController = [[SuggestionsTableViewController alloc] initWithSiteID:siteID];
             suggestionsController.delegate = self;
             [self.navigationController pushViewController:suggestionsController animated:YES];
@@ -1237,19 +1239,23 @@ static NSUInteger const kWPPostViewControllerSaveOnExitActionSheetTag = 201;
 - (void)suggestionTableView:(SuggestionsTableViewController *)suggestionsTableViewController
             didSelectString:(NSString *)string
 {
-    // Build the URL
-    NSString *url = [self.post.blog urlWithPath:[NSString stringWithFormat:@"mentions/%@/", string]];
-
-    // Build the linked text
-    NSString *text = [NSString stringWithFormat:@"@%@", string];
-
-    [self insertLinkWithText:url text:text];
+    // cache the selection for insertion when the table view disappears
+    self.selectedSuggestion = [string mutableCopy];
 }
 
 - (void)suggestionViewDidDisappear:(SuggestionsTableViewController *)suggestionsTableViewController
 {
-    // set focus on editor
-    
+    if ( self.selectedSuggestion ) {
+        // Build the URL
+        NSString *url = [self.post.blog urlWithPath:[NSString stringWithFormat:@"mentions/%@/", self.selectedSuggestion]];
+        
+        // Build the linked text
+        NSString *text = [NSString stringWithFormat:@"@%@", self.selectedSuggestion];
+
+        [self insertLinkWithText:url text:text];
+        
+        self.selectedSuggestion = nil;
+    }
 }
 
 #pragma mark - CTAssetsPickerController delegate
