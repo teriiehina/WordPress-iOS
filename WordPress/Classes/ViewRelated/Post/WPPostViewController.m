@@ -1217,19 +1217,31 @@ static NSUInteger const kWPPostViewControllerSaveOnExitActionSheetTag = 201;
     [self showPreview];
 }
 
-- (void)editorDidStartTerm:(WPEditorViewController *)editorController keyCode:(int)keyCode
+- (void)editorDidFinishLoadingDOM:(WPEditorViewController *)editorController
 {
-    if (64 == keyCode) { // @mentions    
-        NSNumber *siteID = self.post.blog.blogID;
+    // set the trapped keys for mention suggestions
+    [self addTrappedKeyCode:64]; /* @ */
+}
 
-        NSManagedObjectContext *context = [[ContextManager sharedInstance] mainContext];
-        BlogService *service = [[BlogService alloc] initWithManagedObjectContext:context];
-        Blog *blog = [service blogByBlogId:siteID];
-        if (blog && blog.isWPcom && [[SuggestionService shared] shouldShowSuggestionsPageForSiteID:siteID]) {
-            self.selectedSuggestion = nil;
-            SuggestionsTableViewController *suggestionsController = [[SuggestionsTableViewController alloc] initWithSiteID:siteID];
-            suggestionsController.delegate = self;
-            [self.navigationController pushViewController:suggestionsController animated:YES];
+- (void)editorTrappedKeyPressed:(WPEditorViewController *)editorController keyCode:(int)keyCode atStartOfWord:(BOOL)atStartOfWord
+{
+    if (64 == keyCode) { // @mentions
+        if (atStartOfWord) {
+            NSNumber *siteID = self.post.blog.blogID;
+
+            NSManagedObjectContext *context = [[ContextManager sharedInstance] mainContext];
+            BlogService *service = [[BlogService alloc] initWithManagedObjectContext:context];
+            Blog *blog = [service blogByBlogId:siteID];
+            if (blog && blog.isWPcom && [[SuggestionService shared] shouldShowSuggestionsPageForSiteID:siteID]) {
+                self.selectedSuggestion = nil;
+                SuggestionsTableViewController *suggestionsController = [[SuggestionsTableViewController alloc] initWithSiteID:siteID];
+                suggestionsController.delegate = self;
+                [self.navigationController pushViewController:suggestionsController animated:YES];
+            }
+        } else {
+            // we are not at the start of a word - go ahead and just add the @
+            // e.g. we might be inside an email address
+            [self insertText:@"@"];
         }
     }
 }
