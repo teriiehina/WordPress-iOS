@@ -20,6 +20,8 @@
 #import "WPNUXHelpBadgeLabel.h"
 #import <Helpshift/Helpshift.h>
 #import <WordPress-iOS-Shared/WPFontManager.h>
+#import <ReactiveCocoa/ReactiveCocoa.h>
+#import "LoginViewModel.h"
 
 static NSString *const ForgotPasswordDotComBaseUrl = @"https://wordpress.com";
 static NSString *const ForgotPasswordRelativeUrl = @"/wp-login.php?action=lostpassword&redirect_to=wordpress%3A%2F%2F";
@@ -52,6 +54,7 @@ static NSString *const GenerateApplicationSpecificPasswordUrl = @"http://en.supp
     NSArray *_blogs;
     Blog *_blog;
     NSUInteger _numberOfTimesLoginFailed;
+    LoginViewModel *_viewModel;
 }
 
 @end
@@ -73,6 +76,15 @@ CGFloat const GeneralWalkthroughStatusBarOffset = 20.0;
     [[NSNotificationCenter defaultCenter] removeObserver:self];
 }
 
+- (instancetype)init
+{
+    if (self = [super init]) {
+        // WARNING: Move this to be a part of the initializer
+        _viewModel = [[LoginViewModel alloc] init];
+    }
+    return self;
+}
+
 - (void)viewDidLoad
 {
     [super viewDidLoad];
@@ -91,6 +103,7 @@ CGFloat const GeneralWalkthroughStatusBarOffset = 20.0;
 
     [self addMainView];
     [self initializeViewWithDefaultWPComAccount:defaultAccount];
+    [self bindToViewModel];
 
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(keyboardWillShow:)
                                                  name:UIKeyboardWillShowNotification object:nil];
@@ -98,14 +111,20 @@ CGFloat const GeneralWalkthroughStatusBarOffset = 20.0;
                                                  name:UIKeyboardWillHideNotification object:nil];
 }
 
+- (void)bindToViewModel
+{
+    RAC(_viewModel, username) = _usernameText.rac_textSignal;
+    RAC(_viewModel, password) = _passwordText.rac_textSignal;
+}
+
 - (void)viewWillAppear:(BOOL)animated
 {
     [super viewWillAppear:animated];
     [self.navigationController setNavigationBarHidden:YES animated:animated];
-
+    
     [[Helpshift sharedInstance] setDelegate:self];
     [[Helpshift sharedInstance] getNotificationCountFromRemote:YES];
-
+    
     [self layoutControls];
 }
 
