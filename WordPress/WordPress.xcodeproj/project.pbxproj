@@ -521,6 +521,7 @@ fi
 				<string>CC70165E185BB97A007B37DB</string>
 				<string>5D11E3261979E76D00E70992</string>
 				<string>859F761D18F2159800EF8D5D</string>
+				<string>85039B4519DFD5910083A0EB</string>
 				<string>B57B99DE19A2DBF200506504</string>
 				<string>E1523EB516D3B305002C5A36</string>
 				<string>E18EE94B19349EAE00B0A40C</string>
@@ -6862,6 +6863,53 @@ fi
 			<key>isa</key>
 			<string>PBXBuildFile</string>
 		</dict>
+		<key>85039B4219DFD56A0083A0EB</key>
+		<dict>
+			<key>children</key>
+			<array>
+				<string>85039B4319DFD5910083A0EB</string>
+				<string>85039B4419DFD5910083A0EB</string>
+			</array>
+			<key>isa</key>
+			<string>PBXGroup</string>
+			<key>name</key>
+			<string>View Models</string>
+			<key>sourceTree</key>
+			<string>&lt;group&gt;</string>
+		</dict>
+		<key>85039B4319DFD5910083A0EB</key>
+		<dict>
+			<key>fileEncoding</key>
+			<string>4</string>
+			<key>isa</key>
+			<string>PBXFileReference</string>
+			<key>lastKnownFileType</key>
+			<string>sourcecode.c.h</string>
+			<key>path</key>
+			<string>LoginViewModel.h</string>
+			<key>sourceTree</key>
+			<string>&lt;group&gt;</string>
+		</dict>
+		<key>85039B4419DFD5910083A0EB</key>
+		<dict>
+			<key>fileEncoding</key>
+			<string>4</string>
+			<key>isa</key>
+			<string>PBXFileReference</string>
+			<key>lastKnownFileType</key>
+			<string>sourcecode.c.objc</string>
+			<key>path</key>
+			<string>LoginViewModel.m</string>
+			<key>sourceTree</key>
+			<string>&lt;group&gt;</string>
+		</dict>
+		<key>85039B4519DFD5910083A0EB</key>
+		<dict>
+			<key>fileRef</key>
+			<string>85039B4419DFD5910083A0EB</string>
+			<key>isa</key>
+			<string>PBXBuildFile</string>
+		</dict>
 		<key>850BD4531922F95C0032F3AD</key>
 		<dict>
 			<key>children</key>
@@ -6915,6 +6963,7 @@ fi
 		<dict>
 			<key>children</key>
 			<array>
+				<string>85039B4219DFD56A0083A0EB</string>
 				<string>85D08A6F17342ECE00E2BBCA</string>
 				<string>85D08A7017342ECE00E2BBCA</string>
 				<string>85EC44D21739826A00686604</string>
