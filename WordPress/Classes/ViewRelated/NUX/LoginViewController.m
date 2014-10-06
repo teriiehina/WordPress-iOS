@@ -80,7 +80,7 @@ CGFloat const GeneralWalkthroughStatusBarOffset = 20.0;
 - (instancetype)init
 {
     if (self = [super init]) {
-        // WARNING: Move this to be a part of the initializer
+#warning Move this to be a part of the initializer
         _viewModel = [[LoginViewModel alloc] init];
     }
     return self;
