@@ -118,6 +118,11 @@ CGFloat const GeneralWalkthroughStatusBarOffset = 20.0;
     RAC(_viewModel, password) = _passwordText.rac_textSignal;
     RAC(_viewModel, siteUrl) = _siteUrlText.rac_textSignal;
     RAC(_viewModel, userIsDotCom) = RACObserve(self, userIsDotCom);
+    
+    _signInButton.rac_command = [[RACCommand alloc] initWithEnabled:_viewModel.validSignInSignal signalBlock:^RACSignal *(id input){
+        NSLog(@"SIGN IN");
+        return [RACSignal empty];
+    }];
 }
 
 - (void)viewWillAppear:(BOOL)animated
@@ -165,18 +170,6 @@ CGFloat const GeneralWalkthroughStatusBarOffset = 20.0;
     return YES;
 }
 
-- (BOOL)textFieldShouldBeginEditing:(UITextField *)textField
-{
-    _signInButton.enabled = [self isSignInEnabled];
-    return YES;
-}
-
-- (BOOL)textFieldShouldEndEditing:(UITextField *)textField
-{
-    _signInButton.enabled = [self isSignInEnabled];
-    return YES;
-}
-
 - (BOOL)textField:(UITextField *)textField shouldChangeCharactersInRange:(NSRange)range
                                                        replacementString:(NSString *)string
 {
@@ -194,7 +187,6 @@ CGFloat const GeneralWalkthroughStatusBarOffset = 20.0;
     } else if (textField == _siteUrlText) {
         isSiteUrlFilled = updatedStringHasContent;
     }
-    _signInButton.enabled = isUsernameFilled && isPasswordFilled && (self.userIsDotCom || isSiteUrlFilled);
     _forgotPassword.hidden = !(self.userIsDotCom || isSiteUrlFilled);
 
     return YES;
@@ -498,11 +490,11 @@ CGFloat const GeneralWalkthroughStatusBarOffset = 20.0;
     // Add Sign In Button
     if (_signInButton == nil) {
         _signInButton = [[WPNUXMainButton alloc] init];
-        [_signInButton addTarget:self action:@selector(signInButtonAction:) forControlEvents:UIControlEventTouchUpInside];
+//        [_signInButton addTarget:self action:@selector(signInButtonAction:) forControlEvents:UIControlEventTouchUpInside];
         _signInButton.autoresizingMask = UIViewAutoresizingFlexibleRightMargin | UIViewAutoresizingFlexibleLeftMargin;
         [_mainView addSubview:_signInButton];
     }
-    _signInButton.enabled = [self isSignInEnabled];
+//    _signInButton.enabled = [self isSignInEnabled];
 
     NSString *signInTitle;
     if (self.userIsDotCom) {
@@ -842,6 +834,7 @@ CGFloat const GeneralWalkthroughStatusBarOffset = 20.0;
     _statusLabel.hidden = !(status.length > 0);
     _statusLabel.text = status;
 
+#warning Make sure you fix this
     _signInButton.enabled = !authenticating;
     _toggleSignInForm.hidden = authenticating;
     _skipToCreateAccount.hidden = authenticating;
