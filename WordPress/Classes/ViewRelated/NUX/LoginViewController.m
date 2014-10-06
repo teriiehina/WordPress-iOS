@@ -123,6 +123,8 @@ CGFloat const GeneralWalkthroughStatusBarOffset = 20.0;
         NSLog(@"SIGN IN");
         return [RACSignal empty];
     }];
+    
+    RAC(_forgotPassword, hidden) = _viewModel.forgotPasswordHiddenSignal;
 }
 
 - (void)viewWillAppear:(BOOL)animated
@@ -166,28 +168,6 @@ CGFloat const GeneralWalkthroughStatusBarOffset = 20.0;
     } else if (textField == _siteUrlText && _signInButton.enabled) {
         [self signInButtonAction:nil];
     }
-
-    return YES;
-}
-
-- (BOOL)textField:(UITextField *)textField shouldChangeCharactersInRange:(NSRange)range
-                                                       replacementString:(NSString *)string
-{
-    BOOL isUsernameFilled = [self isUsernameFilled];
-    BOOL isPasswordFilled = [self isPasswordFilled];
-    BOOL isSiteUrlFilled = [self isSiteUrlFilled];
-
-    NSMutableString *updatedString = [[NSMutableString alloc] initWithString:textField.text];
-    [updatedString replaceCharactersInRange:range withString:string];
-    BOOL updatedStringHasContent = [[updatedString trim] length] != 0;
-    if (textField == _usernameText) {
-        isUsernameFilled = updatedStringHasContent;
-    } else if (textField == _passwordText) {
-        isPasswordFilled = updatedStringHasContent;
-    } else if (textField == _siteUrlText) {
-        isSiteUrlFilled = updatedStringHasContent;
-    }
-    _forgotPassword.hidden = !(self.userIsDotCom || isSiteUrlFilled);
 
     return YES;
 }
@@ -569,7 +549,6 @@ CGFloat const GeneralWalkthroughStatusBarOffset = 20.0;
         [_forgotPassword setTitleColor:[WPNUXUtility tosLabelColor] forState:UIControlStateNormal];
         [_mainView addSubview:_forgotPassword];
     }
-    _forgotPassword.hidden = ![self isForgotPasswordEnabled];
 }
 
 - (void)layoutControls
@@ -838,6 +817,7 @@ CGFloat const GeneralWalkthroughStatusBarOffset = 20.0;
     _signInButton.enabled = !authenticating;
     _toggleSignInForm.hidden = authenticating;
     _skipToCreateAccount.hidden = authenticating;
+#warning Make sure you fix this
     _forgotPassword.hidden = authenticating;
     _cancelButton.enabled = !authenticating;
     [_signInButton showActivityIndicator:authenticating];

@@ -18,7 +18,6 @@
 @property (nonatomic, assign) BOOL signInEnabled;
 @property (nonatomic, assign) BOOL userIsDotCom;
 @property (nonatomic, readonly) RACSignal *validSignInSignal;
-
-- (void)signIn;
+@property (nonatomic, readonly) RACSignal *forgotPasswordHiddenSignal;
 
 @end

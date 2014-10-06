@@ -12,6 +12,7 @@
 @interface LoginViewModel()
 
 @property (nonatomic, strong) RACSignal *validSignInSignal;
+@property (nonatomic, strong) RACSignal *forgotPasswordHiddenSignal;
 
 @end
 
@@ -35,15 +36,14 @@
             return @(areDotComFieldsFilled && [siteUrl length] > 0);
         }
     }];
+    
     [self.validSignInSignal subscribeNext:^(NSNumber *enabled){
         self.signInEnabled = [enabled boolValue];
-        NSLog(@"VALID SIGN IN SIGNAL : %d", [enabled boolValue]);
     }];
-}
-
-- (void)signIn
-{
-    NSLog(@"SIGN IN");
+    
+    self.forgotPasswordHiddenSignal = [[RACSignal combineLatest:@[RACObserve(self, userIsDotCom), RACObserve(self, siteUrl)]] reduceEach:^(NSNumber *userIsDotCom, NSString *siteUrl){
+        return @(!([userIsDotCom boolValue] || siteUrl.length != 0));
+    }];
 }
 
 - (NSString *)description
