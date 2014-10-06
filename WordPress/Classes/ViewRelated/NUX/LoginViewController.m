@@ -48,7 +48,6 @@ static NSString *const GenerateApplicationSpecificPasswordUrl = @"http://en.supp
     // Measurements
     CGFloat _keyboardOffset;
 
-    BOOL _userIsDotCom;
     BOOL _blogConnectedToJetpack;
     NSString *_dotComSiteUrl;
     NSArray *_blogs;
@@ -56,6 +55,8 @@ static NSString *const GenerateApplicationSpecificPasswordUrl = @"http://en.supp
     NSUInteger _numberOfTimesLoginFailed;
     LoginViewModel *_viewModel;
 }
+
+@property (nonatomic, assign) BOOL userIsDotCom;
 
 @end
 
@@ -91,14 +92,14 @@ CGFloat const GeneralWalkthroughStatusBarOffset = 20.0;
     [self.navigationController setNavigationBarHidden:YES animated:NO];
 
     self.view.backgroundColor = [WPStyleGuide wordPressBlue];
-    _userIsDotCom = self.onlyDotComAllowed || !self.prefersSelfHosted;
+    self.userIsDotCom = self.onlyDotComAllowed || !self.prefersSelfHosted;
 
     NSManagedObjectContext *context = [[ContextManager sharedInstance] mainContext];
     AccountService *accountService = [[AccountService alloc] initWithManagedObjectContext:context];
     WPAccount *defaultAccount = [accountService defaultWordPressComAccount];
 
     if (defaultAccount) {
-        _userIsDotCom = NO;
+        self.userIsDotCom = NO;
     }
 
     [self addMainView];
@@ -115,6 +116,8 @@ CGFloat const GeneralWalkthroughStatusBarOffset = 20.0;
 {
     RAC(_viewModel, username) = _usernameText.rac_textSignal;
     RAC(_viewModel, password) = _passwordText.rac_textSignal;
+    RAC(_viewModel, siteUrl) = _siteUrlText.rac_textSignal;
+    RAC(_viewModel, userIsDotCom) = RACObserve(self, userIsDotCom);
 }
 
 - (void)viewWillAppear:(BOOL)animated
@@ -150,7 +153,7 @@ CGFloat const GeneralWalkthroughStatusBarOffset = 20.0;
     if (textField == _usernameText) {
         [_passwordText becomeFirstResponder];
     } else if (textField == _passwordText) {
-        if (_userIsDotCom) {
+        if (self.userIsDotCom) {
             [self signInButtonAction:nil];
         } else {
             [_siteUrlText becomeFirstResponder];
@@ -191,8 +194,8 @@ CGFloat const GeneralWalkthroughStatusBarOffset = 20.0;
     } else if (textField == _siteUrlText) {
         isSiteUrlFilled = updatedStringHasContent;
     }
-    _signInButton.enabled = isUsernameFilled && isPasswordFilled && (_userIsDotCom || isSiteUrlFilled);
-    _forgotPassword.hidden = !(_userIsDotCom || isSiteUrlFilled);
+    _signInButton.enabled = isUsernameFilled && isPasswordFilled && (self.userIsDotCom || isSiteUrlFilled);
+    _forgotPassword.hidden = !(self.userIsDotCom || isSiteUrlFilled);
 
     return YES;
 }
@@ -355,8 +358,8 @@ CGFloat const GeneralWalkthroughStatusBarOffset = 20.0;
 
 - (void)toggleSignInFormAction:(id)sender
 {
-    _userIsDotCom = !_userIsDotCom;
-    _passwordText.returnKeyType = _userIsDotCom ? UIReturnKeyDone : UIReturnKeyNext;
+    self.userIsDotCom = !self.userIsDotCom;
+    _passwordText.returnKeyType = self.userIsDotCom ? UIReturnKeyDone : UIReturnKeyNext;
     NSManagedObjectContext *context = [[ContextManager sharedInstance] mainContext];
     AccountService *accountService = [[AccountService alloc] initWithManagedObjectContext:context];
     WPAccount *defaultAccount = [accountService defaultWordPressComAccount];
@@ -378,7 +381,7 @@ CGFloat const GeneralWalkthroughStatusBarOffset = 20.0;
 - (void)forgotPassword:(id)sender
 {
     NSString *baseUrl = ForgotPasswordDotComBaseUrl;
-    if (!_userIsDotCom) {
+    if (!self.userIsDotCom) {
         baseUrl = [self getSiteUrl];
     }
     NSURL *forgotPasswordURL = [NSURL URLWithString:[baseUrl stringByAppendingString:ForgotPasswordRelativeUrl]];
@@ -465,7 +468,7 @@ CGFloat const GeneralWalkthroughStatusBarOffset = 20.0;
         _passwordText.font = [WPNUXUtility textFieldFont];
         _passwordText.delegate = self;
         _passwordText.secureTextEntry = YES;
-        _passwordText.returnKeyType = _userIsDotCom ? UIReturnKeyDone : UIReturnKeyNext;
+        _passwordText.returnKeyType = self.userIsDotCom ? UIReturnKeyDone : UIReturnKeyNext;
         _passwordText.showSecureTextEntryToggle = YES;
         _passwordText.showTopLineSeparator = YES;
         _passwordText.autoresizingMask = UIViewAutoresizingFlexibleRightMargin | UIViewAutoresizingFlexibleLeftMargin;
@@ -490,7 +493,7 @@ CGFloat const GeneralWalkthroughStatusBarOffset = 20.0;
         // WP.com account
         [_mainView insertSubview:_siteUrlText belowSubview:_passwordText];
     }
-    _siteUrlText.enabled = !_userIsDotCom;
+    _siteUrlText.enabled = !self.userIsDotCom;
 
     // Add Sign In Button
     if (_signInButton == nil) {
@@ -502,7 +505,7 @@ CGFloat const GeneralWalkthroughStatusBarOffset = 20.0;
     _signInButton.enabled = [self isSignInEnabled];
 
     NSString *signInTitle;
-    if (_userIsDotCom) {
+    if (self.userIsDotCom) {
         signInTitle = NSLocalizedString(@"Sign In", nil);
     } else {
         signInTitle = NSLocalizedString(@"Add Site", nil);
@@ -545,7 +548,7 @@ CGFloat const GeneralWalkthroughStatusBarOffset = 20.0;
             [_mainView addSubview:_toggleSignInForm];
         }
         NSString *toggleTitle;
-        if (_userIsDotCom) {
+        if (self.userIsDotCom) {
             toggleTitle = NSLocalizedString(@"Add Self-Hosted Site", nil);
         } else {
             toggleTitle = NSLocalizedString(@"Sign in to WordPress.com", nil);
@@ -600,7 +603,7 @@ CGFloat const GeneralWalkthroughStatusBarOffset = 20.0;
     _cancelButton.frame = CGRectIntegral(CGRectMake(x, y, CGRectGetWidth(_cancelButton.frame), GeneralWalkthroughButtonHeight));
 
     // Calculate total height and starting Y origin of controls
-    CGFloat heightOfControls = CGRectGetHeight(_icon.frame) + GeneralWalkthroughStandardOffset + (_userIsDotCom ? 2 : 3) * GeneralWalkthroughTextFieldHeight + GeneralWalkthroughStandardOffset + GeneralWalkthroughButtonHeight;
+    CGFloat heightOfControls = CGRectGetHeight(_icon.frame) + GeneralWalkthroughStandardOffset + (self.userIsDotCom ? 2 : 3) * GeneralWalkthroughTextFieldHeight + GeneralWalkthroughStandardOffset + GeneralWalkthroughButtonHeight;
     CGFloat startingYForCenteredControls = floorf((viewHeight - 2 * GeneralWalkthroughSecondaryButtonHeight - heightOfControls)/2.0);
 
     x = (viewWidth - CGRectGetWidth(_icon.frame))/2.0;
@@ -619,7 +622,7 @@ CGFloat const GeneralWalkthroughStatusBarOffset = 20.0;
 
     // Layout Site URL
     x = (viewWidth - GeneralWalkthroughTextFieldWidth)/2.0;
-    y = _userIsDotCom ? CGRectGetMaxY(_usernameText.frame) - 1 : CGRectGetMaxY(_passwordText.frame);
+    y = self.userIsDotCom ? CGRectGetMaxY(_usernameText.frame) - 1 : CGRectGetMaxY(_passwordText.frame);
     _siteUrlText.frame = CGRectIntegral(CGRectMake(x, y, GeneralWalkthroughTextFieldWidth, GeneralWalkthroughTextFieldHeight));
 
     // Layout Sign in Button
@@ -754,7 +757,7 @@ CGFloat const GeneralWalkthroughStatusBarOffset = 20.0;
 
 - (BOOL)areFieldsValid
 {
-    if ([self areSelfHostedFieldsFilled] && !_userIsDotCom) {
+    if ([self areSelfHostedFieldsFilled] && !self.userIsDotCom) {
         return [self isUrlValid];
     }
 
@@ -778,12 +781,12 @@ CGFloat const GeneralWalkthroughStatusBarOffset = 20.0;
 
 - (BOOL)isSignInEnabled
 {
-    return _userIsDotCom ? [self areDotComFieldsFilled] : [self areSelfHostedFieldsFilled];
+    return self.userIsDotCom ? [self areDotComFieldsFilled] : [self areSelfHostedFieldsFilled];
 }
 
 - (BOOL)isForgotPasswordEnabled
 {
-    return _userIsDotCom || [self isUrlValid];
+    return self.userIsDotCom || [self isUrlValid];
 }
 
 - (BOOL)areDotComFieldsFilled
@@ -812,7 +815,7 @@ CGFloat const GeneralWalkthroughStatusBarOffset = 20.0;
 
 - (BOOL)isUserNameReserved
 {
-    if (!_userIsDotCom) {
+    if (!self.userIsDotCom) {
         return NO;
     }
     NSString *username = [[_usernameText.text trim] lowercaseString];
@@ -855,7 +858,7 @@ CGFloat const GeneralWalkthroughStatusBarOffset = 20.0;
     NSString *password = _passwordText.text;
     _dotComSiteUrl = nil;
 
-    if (_userIsDotCom) {
+    if (self.userIsDotCom) {
         [self signInForWPComForUsername:username andPassword:password];
         return;
     }
@@ -901,7 +904,7 @@ CGFloat const GeneralWalkthroughStatusBarOffset = 20.0;
                             password:password
                              success:^(NSString *authToken) {
                                  [self setAuthenticating:NO withStatusMessage:nil];
-                                 _userIsDotCom = YES;
+                                 self.userIsDotCom = YES;
                                  [self createWordPressComAccountForUsername:username password:password authToken:authToken];
                              } failure:^(NSError *error) {
                                  [self setAuthenticating:NO withStatusMessage:nil];

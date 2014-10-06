@@ -8,11 +8,16 @@
 
 #import <Foundation/Foundation.h>
 
+@class RACSignal;
+
 @interface LoginViewModel : NSObject
 
 @property (nonatomic, strong) NSString *username;
 @property (nonatomic, strong) NSString *password;
+@property (nonatomic, strong) NSString *siteUrl;
 @property (nonatomic, assign) BOOL signInEnabled;
+@property (nonatomic, assign) BOOL userIsDotCom;
+@property (nonatomic, readonly) RACSignal *validSignInSignal;
 
 - (void)signIn;
 
