@@ -7207,6 +7207,39 @@ fi
 			<key>sourceTree</key>
 			<string>&lt;group&gt;</string>
 		</dict>
+		<key>85421BD219E35A5400CF4B6A</key>
+		<dict>
+			<key>children</key>
+			<array>
+				<string>85421BD519E35A9300CF4B6A</string>
+			</array>
+			<key>isa</key>
+			<string>PBXGroup</string>
+			<key>name</key>
+			<string>NUX</string>
+			<key>sourceTree</key>
+			<string>&lt;group&gt;</string>
+		</dict>
+		<key>85421BD519E35A9300CF4B6A</key>
+		<dict>
+			<key>fileEncoding</key>
+			<string>4</string>
+			<key>isa</key>
+			<string>PBXFileReference</string>
+			<key>lastKnownFileType</key>
+			<string>sourcecode.c.objc</string>
+			<key>path</key>
+			<string>LoginViewModelTests.m</string>
+			<key>sourceTree</key>
+			<string>&lt;group&gt;</string>
+		</dict>
+		<key>85421BD619E35A9300CF4B6A</key>
+		<dict>
+			<key>fileRef</key>
+			<string>85421BD519E35A9300CF4B6A</string>
+			<key>isa</key>
+			<string>PBXBuildFile</string>
+		</dict>
 		<key>85435BE8190F837500E868D0</key>
 		<dict>
 			<key>fileEncoding</key>
@@ -12448,6 +12481,7 @@ sh ../run-oclint.sh</string>
 		<dict>
 			<key>children</key>
 			<array>
+				<string>85421BD219E35A5400CF4B6A</string>
 				<string>E150520B16CAC5C400D3DDDC</string>
 				<string>930FD0A519882742000CC81D</string>
 				<string>C5CFDC29184F962B00097B05</string>
@@ -13561,6 +13595,7 @@ sh ../run-oclint.sh</string>
 				<string>5D12FE1F1988243700378BD6</string>
 				<string>C5CFDC2A184F962B00097B05</string>
 				<string>5DE8A0411912D95B00B2FF59</string>
+				<string>85421BD619E35A9300CF4B6A</string>
 				<string>930FD0A619882742000CC81D</string>
 				<string>5D2BEB4919758102005425F7</string>
 				<string>E150520F16CAC75A00D3DDDC</string>
