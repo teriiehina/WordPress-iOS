@@ -123,7 +123,7 @@ CGFloat const GeneralWalkthroughStatusBarOffset = 20.0;
     
     _signInButton.rac_command = [[RACCommand alloc] initWithEnabled:_viewModel.validSignInSignal signalBlock:^RACSignal *(id input){
         NSLog(@"SIGN IN");
-        [self signIn];
+        [self signInButtonAction:nil];
         return [RACSignal empty];
     }];
     
