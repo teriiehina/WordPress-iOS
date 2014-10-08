@@ -45,6 +45,14 @@ describe(@"Enabled status of the sign in button", ^{
             _loginViewModel.siteUrl = @"";
             expect(_loginViewModel.signInEnabled).to.beTruthy();
         });
+        
+        it(@"should not be enabled when username and password are filled but authenticating is true", ^{
+            _loginViewModel.username = username;
+            _loginViewModel.password = password;
+            _loginViewModel.siteUrl = @"";
+            _loginViewModel.authenticating = YES;
+            expect(_loginViewModel.signInEnabled).to.beFalsy();
+        });
     });
     
     context(@"for a self hosted site", ^{
@@ -80,6 +88,14 @@ describe(@"Enabled status of the sign in button", ^{
             _loginViewModel.siteUrl = siteUrl;
             expect(_loginViewModel.signInEnabled).to.beTruthy();
         });
+        
+        it(@"should not be enabled when username, password and siteUrl are filled but authenticating is true" , ^{
+            _loginViewModel.username = username;
+            _loginViewModel.password = password;
+            _loginViewModel.siteUrl = siteUrl;
+            _loginViewModel.authenticating = YES;
+            expect(_loginViewModel.signInEnabled).to.beFalsy();
+        });
     });
 });
 
@@ -100,6 +116,16 @@ describe(@"The forgot password button", ^{
             
             expect(hidden).to.beFalsy();
         });
+        
+        it(@"should not be visible when authenticating", ^{
+            __block BOOL hidden;
+            _loginViewModel.authenticating = YES;
+            [_loginViewModel.forgotPasswordHiddenSignal subscribeNext:^(NSNumber *forgotPasswordHidden){
+                hidden = [forgotPasswordHidden boolValue];
+            }];
+            
+            expect(hidden).to.beTruthy();
+        });
     });
     
     context(@"for a self hosted site", ^{
@@ -118,7 +144,7 @@ describe(@"The forgot password button", ^{
             expect(hidden).to.beTruthy();
         });
         
-        it(@"should be hidden when the siteUrl is filled", ^{
+        it(@"should not be hidden when the siteUrl is filled", ^{
             _loginViewModel.siteUrl = siteUrl;
             
             __block BOOL hidden;
@@ -127,6 +153,18 @@ describe(@"The forgot password button", ^{
             }];
             
             expect(hidden).to.beFalsy();
+        });
+        
+        it(@"should be hidden when the site url is filled and user is authenticating", ^{
+            _loginViewModel.siteUrl = siteUrl;
+            _loginViewModel.authenticating = YES;
+            
+            __block BOOL hidden;
+            [_loginViewModel.forgotPasswordHiddenSignal subscribeNext:^(NSNumber *forgotPasswordHidden){
+                hidden = [forgotPasswordHidden boolValue];
+            }];
+            
+            expect(hidden).to.beTruthy();
         });
     });
     

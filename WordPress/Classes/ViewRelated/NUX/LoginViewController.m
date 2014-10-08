@@ -57,6 +57,7 @@ static NSString *const GenerateApplicationSpecificPasswordUrl = @"http://en.supp
 }
 
 @property (nonatomic, assign) BOOL userIsDotCom;
+@property (nonatomic, assign) BOOL authenticating;
 
 @end
 
@@ -118,9 +119,11 @@ CGFloat const GeneralWalkthroughStatusBarOffset = 20.0;
     RAC(_viewModel, password) = _passwordText.rac_textSignal;
     RAC(_viewModel, siteUrl) = _siteUrlText.rac_textSignal;
     RAC(_viewModel, userIsDotCom) = RACObserve(self, userIsDotCom);
+    RAC(_viewModel, authenticating) = RACObserve(self, authenticating);
     
     _signInButton.rac_command = [[RACCommand alloc] initWithEnabled:_viewModel.validSignInSignal signalBlock:^RACSignal *(id input){
         NSLog(@"SIGN IN");
+        [self signIn];
         return [RACSignal empty];
     }];
     
@@ -809,16 +812,13 @@ CGFloat const GeneralWalkthroughStatusBarOffset = 20.0;
 
 - (void)setAuthenticating:(BOOL)authenticating withStatusMessage:(NSString *)status
 {
-
+    self.authenticating = authenticating;
+    
     _statusLabel.hidden = !(status.length > 0);
     _statusLabel.text = status;
 
-#warning Make sure you fix this
-    _signInButton.enabled = !authenticating;
     _toggleSignInForm.hidden = authenticating;
     _skipToCreateAccount.hidden = authenticating;
-#warning Make sure you fix this
-    _forgotPassword.hidden = authenticating;
     _cancelButton.enabled = !authenticating;
     [_signInButton showActivityIndicator:authenticating];
 }
