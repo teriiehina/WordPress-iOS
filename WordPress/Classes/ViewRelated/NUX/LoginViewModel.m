@@ -1,13 +1,6 @@
-//
-//  LoginViewModel.m
-//  WordPress
-//
-//  Created by Sendhil Panchadsaram on 10/4/14.
-//  Copyright (c) 2014 WordPress. All rights reserved.
-//
-
 #import "LoginViewModel.h"
 #import <ReactiveCocoa/ReactiveCocoa.h>
+#import "ReachabilityService.h"
 
 @interface LoginViewModel()
 
@@ -51,6 +44,15 @@
         }
         return @(!([userIsDotCom boolValue] || siteUrl.length != 0));
     }];
+}
+
+- (void)signIn
+{
+    NSAssert(self.reachabilityService != nil, @"Reachability Service should be set");
+    
+    if (![self.reachabilityService isInternetReachable]) {
+        [self.reachabilityService showAlertNoInternetConnection];
+    }
 }
 
 - (NSString *)description

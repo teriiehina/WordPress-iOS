@@ -4,6 +4,7 @@
 #import <OCMock/OCMock.h>
 #import <ReactiveCocoa/ReactiveCocoa.h>
 #import "LoginViewModel.h"
+#import "ReachabilityService.h"
 
 SpecBegin(LoginViewModelTests)
 
@@ -168,6 +169,28 @@ describe(@"The forgot password button", ^{
         });
     });
     
+});
+
+describe(@"-signIn", ^{
+    
+    id reachabilityServiceMock = [OCMockObject niceMockForClass:[ReachabilityService class]];
+    
+    beforeEach(^{
+        _loginViewModel.reachabilityService = reachabilityServiceMock;
+    });
+  
+    it(@"should check if the internet is available", ^{
+        [[reachabilityServiceMock expect] isInternetReachable];
+        [_loginViewModel signIn];
+        [reachabilityServiceMock verify];
+    });
+    
+    it(@"should display a message about the internet being offline when it is", ^{
+        [[[reachabilityServiceMock stub] andReturnValue:OCMOCK_VALUE(NO)] isInternetReachable];
+        [[reachabilityServiceMock expect] showAlertNoInternetConnection];
+        [_loginViewModel signIn];
+        [reachabilityServiceMock verify];
+    });
 });
 
 SpecEnd
