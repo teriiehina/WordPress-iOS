@@ -1,6 +1,7 @@
 #import "LoginViewModel.h"
 #import <ReactiveCocoa/ReactiveCocoa.h>
 #import "ReachabilityService.h"
+#import "ErrorNotifyingService.h"
 
 @interface LoginViewModel()
 
@@ -17,6 +18,12 @@
         [self setup];
     }
     return self;
+}
+
+- (void)verifyServices
+{
+    NSAssert(self.reachabilityService !=  nil, @"");
+    NSAssert(self.errorNotifiyingService !=  nil, @"");
 }
 
 - (void)setup
@@ -48,11 +55,47 @@
 
 - (void)signIn
 {
-    NSAssert(self.reachabilityService != nil, @"Reachability Service should be set");
+    [self verifyServices];
     
     if (![self.reachabilityService isInternetReachable]) {
         [self.reachabilityService showAlertNoInternetConnection];
     }
+    
+    if (![self areFieldsValid]) {
+        [self.errorNotifiyingService showAlertWithTitle:NSLocalizedString(@"Error", nil) message:NSLocalizedString(@"Please fill out all the fields", nil) withSupportButton:NO];
+    }
+}
+
+- (BOOL)areFieldsValid
+{
+    if (self.userIsDotCom) {
+        return [self areDotComFieldsFilled];
+    } else {
+        if ([self areSelfHostedFieldsFilled]) {
+            return [self isUrlValid];
+        } else {
+            return NO;
+        }
+    }
+}
+
+- (BOOL)areDotComFieldsFilled
+{
+    return [self.username length] > 0 && [self.password length] > 0;
+}
+
+- (BOOL)areSelfHostedFieldsFilled
+{
+    return [self areDotComFieldsFilled] && [self.siteUrl length] > 0;
+}
+
+- (BOOL)isUrlValid
+{
+    if ([self.siteUrl length] == 0) {
+        return NO;
+    }
+    NSURL *siteURL = [NSURL URLWithString:self.siteUrl];
+    return siteURL != nil;
 }
 
 - (NSString *)description

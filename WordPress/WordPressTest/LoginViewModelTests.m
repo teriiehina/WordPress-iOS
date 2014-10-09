@@ -5,18 +5,24 @@
 #import <ReactiveCocoa/ReactiveCocoa.h>
 #import "LoginViewModel.h"
 #import "ReachabilityService.h"
+#import "ErrorNotifyingService.h"
 
 SpecBegin(LoginViewModelTests)
+
+NSString *username = @"username";
+NSString *password = @"password";
+NSString *siteUrl = @"randomsite.wordpress.com";
+
+id reachabilityServiceMock = [OCMockObject niceMockForClass:[ReachabilityService class]];
+id errorNotifyingServiceMock = [OCMockObject niceMockForClass:[ErrorNotifyingService class]];
 
 __block LoginViewModel *_loginViewModel;
 
 beforeEach(^{
     _loginViewModel = [[LoginViewModel alloc] init];
+    _loginViewModel.reachabilityService = reachabilityServiceMock;
+    _loginViewModel.errorNotifiyingService = errorNotifyingServiceMock;
 });
-
-NSString *username = @"username";
-NSString *password = @"password";
-NSString *siteUrl = @"randomsite.wordpress.com";
 
 describe(@"Enabled status of the sign in button", ^{
     
@@ -103,7 +109,7 @@ describe(@"Enabled status of the sign in button", ^{
 describe(@"The forgot password button", ^{
     
     context(@"for a WordPress.com site", ^{
-       
+        
         beforeEach(^{
             _loginViewModel.userIsDotCom = YES;
         });
@@ -173,24 +179,72 @@ describe(@"The forgot password button", ^{
 
 describe(@"-signIn", ^{
     
-    id reachabilityServiceMock = [OCMockObject niceMockForClass:[ReachabilityService class]];
+    context(@"internet availability", ^{
+        it(@"should check if the internet is available", ^{
+            [[reachabilityServiceMock expect] isInternetReachable];
+            [_loginViewModel signIn];
+            [reachabilityServiceMock verify];
+        });
+        
+        it(@"should display a message about the internet being offline when it is", ^{
+            [[[reachabilityServiceMock stub] andReturnValue:OCMOCK_VALUE(NO)] isInternetReachable];
+            [[reachabilityServiceMock expect] showAlertNoInternetConnection];
+            [_loginViewModel signIn];
+            [reachabilityServiceMock verify];
+        });
+    });
     
-    beforeEach(^{
-        _loginViewModel.reachabilityService = reachabilityServiceMock;
-    });
-  
-    it(@"should check if the internet is available", ^{
-        [[reachabilityServiceMock expect] isInternetReachable];
-        [_loginViewModel signIn];
-        [reachabilityServiceMock verify];
+    context(@"field validation", ^{
+        
+        beforeEach(^{
+            _loginViewModel.username = username;
+            _loginViewModel.password = password;
+            _loginViewModel.userIsDotCom = YES;
+        });
+        
+        void (^setupLoginErrorBlock)(void) = ^{
+            [[errorNotifyingServiceMock expect] showAlertWithTitle:[OCMArg any] message:[OCMArg any] withSupportButton:NO];
+        };
+        
+        context(@"for WordPress.com users", ^{
+            
+            it(@"should display an error message if username is blank", ^{
+                setupLoginErrorBlock();
+                _loginViewModel.username = nil;
+                [_loginViewModel signIn];
+                [errorNotifyingServiceMock verify];
+            });
+            
+            it(@"should display an error message if password is blank", ^{
+                setupLoginErrorBlock();
+                _loginViewModel.password = nil;
+                [_loginViewModel signIn];
+                [errorNotifyingServiceMock verify];
+            });
+        });
+        
+        context(@"for self hosted users", ^{
+            beforeEach(^{
+                _loginViewModel.userIsDotCom = NO;
+                _loginViewModel.siteUrl = siteUrl;
+            });
+            
+            it(@"should display an error message if the site url is blank", ^{
+                setupLoginErrorBlock();
+                _loginViewModel.siteUrl = nil;
+                [_loginViewModel signIn];
+                [errorNotifyingServiceMock verify];
+            });
+            
+            it(@"should display an error message if the site url is invalid", ^{
+                setupLoginErrorBlock();
+                _loginViewModel.siteUrl = @"@@#%A$^@#$@#";
+                [_loginViewModel signIn];
+                [errorNotifyingServiceMock verify];
+            });
+        });
     });
     
-    it(@"should display a message about the internet being offline when it is", ^{
-        [[[reachabilityServiceMock stub] andReturnValue:OCMOCK_VALUE(NO)] isInternetReachable];
-        [[reachabilityServiceMock expect] showAlertNoInternetConnection];
-        [_loginViewModel signIn];
-        [reachabilityServiceMock verify];
-    });
 });
 
 SpecEnd
