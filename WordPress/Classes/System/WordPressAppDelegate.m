@@ -10,6 +10,7 @@
 #import <Simperium/Simperium.h>
 #import <Helpshift/Helpshift.h>
 #import <Taplytics/Taplytics.h>
+#import <AppbotX/ABX.h>
 #import <Lookback/Lookback.h>
 #import <WordPress-iOS-Shared/WPFontManager.h>
 
@@ -194,6 +195,7 @@ static NSString* const kWPNewPostURLParamImageKey = @"image";
     [self.window makeKeyAndVisible];
     [self showWelcomeScreenIfNeededAnimated:NO];
     [self setupLookback];
+    [self setupAppbotX];
 
     return YES;
 }
@@ -228,6 +230,13 @@ static NSString* const kWPNewPostURLParamImageKey = @"image";
         }
     });
 #endif
+}
+
+- (void)setupAppbotX
+{
+    if ([WordPressComApiCredentials appbotXAPIKey].length > 0) {
+        [[ABXApiClient instance] setApiKey:[WordPressComApiCredentials appbotXAPIKey]];
+    }
 }
 
 - (void)lookbackGestureRecognized:(UILongPressGestureRecognizer *)sender

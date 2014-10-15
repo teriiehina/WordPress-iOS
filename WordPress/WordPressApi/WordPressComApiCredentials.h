@@ -1,6 +1,7 @@
 #import <Foundation/Foundation.h>
 
 @interface WordPressComApiCredentials : NSObject
+
 + (NSString *)client;
 + (NSString *)secret;
 + (NSString *)pocketConsumerKey;
@@ -16,4 +17,6 @@
 + (NSString *)taplyticsAPIKey;
 + (NSString *)debuggingKey;
 + (NSString *)lookbackToken;
++ (NSString *)appbotXAPIKey;
+
 @end
