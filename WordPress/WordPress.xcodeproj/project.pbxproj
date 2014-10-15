@@ -198,6 +198,7 @@
 		85421BD619E35A9300CF4B6A /* LoginViewModelTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 85421BD519E35A9300CF4B6A /* LoginViewModelTests.m */; };
 		85435BEA190F837500E868D0 /* WPUploadStatusView.m in Sources */ = {isa = PBXBuildFile; fileRef = 85435BE9190F837500E868D0 /* WPUploadStatusView.m */; };
 		857610D618C0377300EDF406 /* StatsWebViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 857610D518C0377300EDF406 /* StatsWebViewController.m */; };
+		85815BE619EE3B5400FBD193 /* WordPressComLoginService.m in Sources */ = {isa = PBXBuildFile; fileRef = 85815BE519EE3B5400FBD193 /* WordPressComLoginService.m */; };
 		858DE40F1730384F000AC628 /* LoginViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 858DE40E1730384F000AC628 /* LoginViewController.m */; };
 		859CFD46190E3198005FB217 /* WPMediaUploader.m in Sources */ = {isa = PBXBuildFile; fileRef = 859CFD45190E3198005FB217 /* WPMediaUploader.m */; };
 		859F761D18F2159800EF8D5D /* WPAnalyticsTrackerMixpanelInstructionsForStat.m in Sources */ = {isa = PBXBuildFile; fileRef = 859F761C18F2159800EF8D5D /* WPAnalyticsTrackerMixpanelInstructionsForStat.m */; };
@@ -792,6 +793,8 @@
 		85435BE9190F837500E868D0 /* WPUploadStatusView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = WPUploadStatusView.m; sourceTree = "<group>"; usesTabs = 0; };
 		857610D418C0377300EDF406 /* StatsWebViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StatsWebViewController.h; sourceTree = "<group>"; };
 		857610D518C0377300EDF406 /* StatsWebViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = StatsWebViewController.m; sourceTree = "<group>"; };
+		85815BE419EE3B5400FBD193 /* WordPressComLoginService.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WordPressComLoginService.h; sourceTree = "<group>"; };
+		85815BE519EE3B5400FBD193 /* WordPressComLoginService.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = WordPressComLoginService.m; sourceTree = "<group>"; };
 		858DE40D1730384F000AC628 /* LoginViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LoginViewController.h; sourceTree = "<group>"; };
 		858DE40E1730384F000AC628 /* LoginViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LoginViewController.m; sourceTree = "<group>"; };
 		859CFD44190E3198005FB217 /* WPMediaUploader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WPMediaUploader.h; sourceTree = "<group>"; };
@@ -2002,6 +2005,8 @@
 				85C6B33719E64EEE00148064 /* ReachabilityService.m */,
 				85C6B33919E6595400148064 /* ErrorNotifyingService.h */,
 				85C6B33A19E6595400148064 /* ErrorNotifyingService.m */,
+				85815BE419EE3B5400FBD193 /* WordPressComLoginService.h */,
+				85815BE519EE3B5400FBD193 /* WordPressComLoginService.m */,
 			);
 			name = Services;
 			sourceTree = "<group>";
@@ -2904,6 +2909,7 @@
 				B5F015CB195DFD7600F6ECF2 /* WordPressActivity.m in Sources */,
 				1D60589B0D05DD56006BFB54 /* main.m in Sources */,
 				5D577D33189127BE00B964C3 /* PostGeolocationViewController.m in Sources */,
+				85815BE619EE3B5400FBD193 /* WordPressComLoginService.m in Sources */,
 				1D3623260D0F684500981E51 /* WordPressAppDelegate.m in Sources */,
 				5D7DEA2919D488DD0032EE77 /* WPStyleGuide+Comments.swift in Sources */,
 				5DB3BA0818D11D8D00F3F3E9 /* PublishDatePickerView.m in Sources */,

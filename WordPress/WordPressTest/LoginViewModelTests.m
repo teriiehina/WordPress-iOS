@@ -6,6 +6,7 @@
 #import "LoginViewModel.h"
 #import "ReachabilityService.h"
 #import "ErrorNotifyingService.h"
+#import "WordPressComLoginService.h"
 
 SpecBegin(LoginViewModelTests)
 
@@ -15,6 +16,7 @@ NSString *siteUrl = @"randomsite.wordpress.com";
 
 id reachabilityServiceMock = [OCMockObject niceMockForClass:[ReachabilityService class]];
 id errorNotifyingServiceMock = [OCMockObject niceMockForClass:[ErrorNotifyingService class]];
+id wordpressComLoginServiceMock = [OCMockObject niceMockForClass:[WordPressComLoginService class]];
 
 __block LoginViewModel *_loginViewModel;
 
@@ -22,6 +24,7 @@ beforeEach(^{
     _loginViewModel = [[LoginViewModel alloc] init];
     _loginViewModel.reachabilityService = reachabilityServiceMock;
     _loginViewModel.errorNotifiyingService = errorNotifyingServiceMock;
+    _loginViewModel.wordpressComLoginService = wordpressComLoginServiceMock;
     _loginViewModel.onSetAuthenticating = ^(BOOL authenticating, NSString *message) {};
 });
 
@@ -263,7 +266,13 @@ describe(@"-signIn", ^{
             
             [_loginViewModel signIn];
             expect(callbackExecuted).to.beTruthy();
-        });     
+        });
+        
+        it(@"should attempt to sign into the Wordpress.com Login Service", ^{
+            [[wordpressComLoginServiceMock expect] authenticateWithUsername:[OCMArg any] password:[OCMArg any] success:[OCMArg any] failure:[OCMArg any]];
+            [_loginViewModel signIn];
+            [wordpressComLoginServiceMock verify];
+        });
     });
    
     

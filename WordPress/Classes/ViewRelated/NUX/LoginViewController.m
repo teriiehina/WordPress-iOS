@@ -22,6 +22,9 @@
 #import <WordPress-iOS-Shared/WPFontManager.h>
 #import <ReactiveCocoa/ReactiveCocoa.h>
 #import "LoginViewModel.h"
+#import "WordPressComLoginService.h"
+#import "ErrorNotifyingService.h"
+#import "ReachabilityService.h"
 
 static NSString *const ForgotPasswordDotComBaseUrl = @"https://wordpress.com";
 static NSString *const ForgotPasswordRelativeUrl = @"/wp-login.php?action=lostpassword&redirect_to=wordpress%3A%2F%2F";
@@ -81,10 +84,24 @@ CGFloat const GeneralWalkthroughStatusBarOffset = 20.0;
 - (instancetype)init
 {
     if (self = [super init]) {
-#warning Move this to be a part of the initializer
-        _viewModel = [[LoginViewModel alloc] init];
+        [self initializeViewModel];
     }
     return self;
+}
+
+- (void)initializeViewModel
+{
+#warning Move this to be a part of the initializer
+    _viewModel = [[LoginViewModel alloc] init];
+    _viewModel.errorNotifiyingService = [ErrorNotifyingService new];
+    _viewModel.reachabilityService = [ReachabilityService new];
+    _viewModel.wordpressComLoginService = [WordPressComLoginService new];
+    
+    __weak __typeof(self)weakSelf = self;
+    _viewModel.onSetAuthenticating = ^(BOOL authenticating, NSString *message) {
+        __strong __typeof(weakSelf)strongSelf = weakSelf;
+        [strongSelf setAuthenticating:authenticating withStatusMessage:message];
+    };
 }
 
 - (void)viewDidLoad
@@ -123,7 +140,8 @@ CGFloat const GeneralWalkthroughStatusBarOffset = 20.0;
     
     _signInButton.rac_command = [[RACCommand alloc] initWithEnabled:_viewModel.validSignInSignal signalBlock:^RACSignal *(id input){
         NSLog(@"SIGN IN");
-        [self signInButtonAction:nil];
+        [_viewModel signIn];
+//        [self signInButtonAction:nil];
         return [RACSignal empty];
     }];
     

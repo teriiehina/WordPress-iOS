@@ -4,6 +4,7 @@
 
 @protocol ReachabilityServiceProtocol;
 @protocol ErrorNotifyingServiceProtocol;
+@protocol WordPressComLoginServiceProtocol;
 
 @interface LoginViewModel : NSObject
 
@@ -17,8 +18,9 @@
 @property (nonatomic, readonly) RACSignal *forgotPasswordHiddenSignal;
 
 // Services
-@property (nonatomic, weak) id<ReachabilityServiceProtocol> reachabilityService;
-@property (nonatomic, weak) id<ErrorNotifyingServiceProtocol> errorNotifiyingService;
+@property (nonatomic, strong) id<ReachabilityServiceProtocol> reachabilityService;
+@property (nonatomic, strong) id<ErrorNotifyingServiceProtocol> errorNotifiyingService;
+@property (nonatomic, strong) id<WordPressComLoginServiceProtocol> wordpressComLoginService;
 
 // Callbacks
 @property (nonatomic, copy) void (^onSetAuthenticating)(BOOL authenticating, NSString * message);

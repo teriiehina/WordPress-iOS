@@ -2,6 +2,7 @@
 #import <ReactiveCocoa/ReactiveCocoa.h>
 #import "ReachabilityService.h"
 #import "ErrorNotifyingService.h"
+#import "WordPressComLoginService.h"
 
 @interface LoginViewModel()
 
@@ -25,6 +26,7 @@
     NSAssert(self.reachabilityService !=  nil, @"");
     NSAssert(self.errorNotifiyingService !=  nil, @"");
     NSAssert(self.onSetAuthenticating != nil, @"");
+    NSAssert(self.wordpressComLoginService != nil, @"");
 }
 
 - (void)setup
@@ -69,6 +71,45 @@
 #warning Add `isUsernameReserved` checks
    
     self.onSetAuthenticating(YES, NSLocalizedString(@"Authenticating", nil));
+    
+    if (self.userIsDotCom || [self isUrlWPCom:self.siteUrl]) {
+        [self signInToDotCom];
+    }
+    
+    [self checkIfSiteIsSelfHosted];
+}
+
+- (BOOL)isUrlWPCom:(NSString *)url
+{
+    if (url.length == 0) {
+        return NO;
+    }
+    
+    NSRegularExpression *protocol = [NSRegularExpression regularExpressionWithPattern:@"wordpress\\.com/?$" options:NSRegularExpressionCaseInsensitive error:nil];
+    NSArray *result = [protocol matchesInString:[url trim] options:NSRegularExpressionCaseInsensitive range:NSMakeRange(0, [[url trim] length])];
+
+    return [result count] != 0;
+}
+
+- (void)signInToDotCom
+{
+    self.onSetAuthenticating(YES, NSLocalizedString(@"Authenticating", nil));
+    
+    [self.wordpressComLoginService authenticateWithUsername:self.username
+                                                   password:self.password
+                                                    success:^(NSString *authToken){
+#warning Flesh this out
+                                                        NSLog(@"AUTH TOKEN %@", authToken);
+                                                    }
+                                                    failure:^(NSError *error){
+#warning Flesh this out
+                                                        NSLog(@"Failed to get auth token %@", [error localizedDescription]);
+                                                    }];
+}
+
+- (void)checkIfSiteIsSelfHosted
+{
+    
 }
 
 - (BOOL)areFieldsValid
