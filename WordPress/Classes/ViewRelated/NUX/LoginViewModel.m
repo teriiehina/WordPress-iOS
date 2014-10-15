@@ -20,10 +20,11 @@
     return self;
 }
 
-- (void)verifyServices
+- (void)verifySignInServices
 {
     NSAssert(self.reachabilityService !=  nil, @"");
     NSAssert(self.errorNotifiyingService !=  nil, @"");
+    NSAssert(self.onSetAuthenticating != nil, @"");
 }
 
 - (void)setup
@@ -55,7 +56,7 @@
 
 - (void)signIn
 {
-    [self verifyServices];
+    [self verifySignInServices];
     
     if (![self.reachabilityService isInternetReachable]) {
         [self.reachabilityService showAlertNoInternetConnection];
@@ -64,6 +65,10 @@
     if (![self areFieldsValid]) {
         [self.errorNotifiyingService showAlertWithTitle:NSLocalizedString(@"Error", nil) message:NSLocalizedString(@"Please fill out all the fields", nil) withSupportButton:NO];
     }
+    
+#warning Add `isUsernameReserved` checks
+   
+    self.onSetAuthenticating(YES, NSLocalizedString(@"Authenticating", nil));
 }
 
 - (BOOL)areFieldsValid

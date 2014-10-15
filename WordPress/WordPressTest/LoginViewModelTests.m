@@ -22,6 +22,7 @@ beforeEach(^{
     _loginViewModel = [[LoginViewModel alloc] init];
     _loginViewModel.reachabilityService = reachabilityServiceMock;
     _loginViewModel.errorNotifiyingService = errorNotifyingServiceMock;
+    _loginViewModel.onSetAuthenticating = ^(BOOL authenticating, NSString *message) {};
 });
 
 describe(@"Enabled status of the sign in button", ^{
@@ -244,6 +245,27 @@ describe(@"-signIn", ^{
             });
         });
     });
+    
+    context(@"with valid parameters for Wordpress.com", ^{
+        
+        beforeEach(^{
+            _loginViewModel.username = username;
+            _loginViewModel.password = password;
+            _loginViewModel.userIsDotCom = YES;
+        });
+    
+        it(@"should tell the view to toggle the authentication status", ^{
+            __block BOOL callbackExecuted = NO;
+            _loginViewModel.onSetAuthenticating = ^(BOOL authenticating, NSString *message) {
+                callbackExecuted = YES;
+                expect(authenticating).to.beTruthy();
+            };
+            
+            [_loginViewModel signIn];
+            expect(callbackExecuted).to.beTruthy();
+        });     
+    });
+   
     
 });
 

@@ -20,6 +20,9 @@
 @property (nonatomic, weak) id<ReachabilityServiceProtocol> reachabilityService;
 @property (nonatomic, weak) id<ErrorNotifyingServiceProtocol> errorNotifiyingService;
 
+// Callbacks
+@property (nonatomic, copy) void (^onSetAuthenticating)(BOOL authenticating, NSString * message);
+
 -(void)signIn;
 
 @end
