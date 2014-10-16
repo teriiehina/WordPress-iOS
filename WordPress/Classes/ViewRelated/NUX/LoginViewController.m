@@ -98,7 +98,7 @@ CGFloat const GeneralWalkthroughStatusBarOffset = 20.0;
     _viewModel.wordpressComLoginService = [WordPressComLoginService new];
     
     __weak __typeof(self)weakSelf = self;
-    _viewModel.onSetAuthenticating = ^(BOOL authenticating, NSString *message) {
+    _viewModel.setAuthenticatingBlock = ^(BOOL authenticating, NSString *message) {
         __strong __typeof(weakSelf)strongSelf = weakSelf;
         [strongSelf setAuthenticating:authenticating withStatusMessage:message];
     };

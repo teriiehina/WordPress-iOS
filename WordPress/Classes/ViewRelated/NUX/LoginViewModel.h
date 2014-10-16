@@ -23,7 +23,7 @@
 @property (nonatomic, strong) id<WordPressComLoginServiceProtocol> wordpressComLoginService;
 
 // Callbacks
-@property (nonatomic, copy) void (^onSetAuthenticating)(BOOL authenticating, NSString * message);
+@property (nonatomic, copy) void (^setAuthenticatingBlock)(BOOL authenticating, NSString * message);
 
 -(void)signIn;
 

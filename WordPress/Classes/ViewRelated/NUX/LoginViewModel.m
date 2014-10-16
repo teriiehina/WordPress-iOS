@@ -25,7 +25,7 @@
 {
     NSAssert(self.reachabilityService !=  nil, @"");
     NSAssert(self.errorNotifiyingService !=  nil, @"");
-    NSAssert(self.onSetAuthenticating != nil, @"");
+    NSAssert(self.setAuthenticatingBlock != nil, @"");
     NSAssert(self.wordpressComLoginService != nil, @"");
 }
 
@@ -70,7 +70,7 @@
     
 #warning Add `isUsernameReserved` checks
    
-    self.onSetAuthenticating(YES, NSLocalizedString(@"Authenticating", nil));
+    self.setAuthenticatingBlock(YES, NSLocalizedString(@"Authenticating", nil));
     
     if (self.userIsDotCom || [self isUrlWPCom:self.siteUrl]) {
         [self signInToDotCom];
@@ -93,16 +93,18 @@
 
 - (void)signInToDotCom
 {
-    self.onSetAuthenticating(YES, NSLocalizedString(@"Authenticating", nil));
+    self.setAuthenticatingBlock(YES, NSLocalizedString(@"Authenticating", nil));
     
     [self.wordpressComLoginService authenticateWithUsername:self.username
                                                    password:self.password
                                                     success:^(NSString *authToken){
+                                                        self.setAuthenticatingBlock(NO, nil);
 #warning Flesh this out
                                                         NSLog(@"AUTH TOKEN %@", authToken);
                                                     }
                                                     failure:^(NSError *error){
 #warning Flesh this out
+                                                        self.setAuthenticatingBlock(NO, nil);
                                                         NSLog(@"Failed to get auth token %@", [error localizedDescription]);
                                                     }];
 }

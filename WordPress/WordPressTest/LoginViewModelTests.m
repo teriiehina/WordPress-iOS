@@ -25,7 +25,7 @@ beforeEach(^{
     _loginViewModel.reachabilityService = reachabilityServiceMock;
     _loginViewModel.errorNotifiyingService = errorNotifyingServiceMock;
     _loginViewModel.wordpressComLoginService = wordpressComLoginServiceMock;
-    _loginViewModel.onSetAuthenticating = ^(BOOL authenticating, NSString *message) {};
+    _loginViewModel.setAuthenticatingBlock = ^(BOOL authenticating, NSString *message) {};
 });
 
 describe(@"Enabled status of the sign in button", ^{
@@ -259,7 +259,7 @@ describe(@"-signIn", ^{
     
         it(@"should tell the view to toggle the authentication status", ^{
             __block BOOL callbackExecuted = NO;
-            _loginViewModel.onSetAuthenticating = ^(BOOL authenticating, NSString *message) {
+            _loginViewModel.setAuthenticatingBlock = ^(BOOL authenticating, NSString *message) {
                 callbackExecuted = YES;
                 expect(authenticating).to.beTruthy();
             };
