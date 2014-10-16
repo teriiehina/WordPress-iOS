@@ -273,6 +273,18 @@ describe(@"-signIn", ^{
             [_loginViewModel signIn];
             [wordpressComLoginServiceMock verify];
         });
+        
+        it(@"should create a WPAccount with the proper credentials", ^{
+            [[[wordpressComLoginServiceMock stub] andDo:^(NSInvocation *invocation) {
+                // The reason for the __unsafe_unretained is http://stackoverflow.com/questions/13268502/exc-bad-access-when-accessing-parameters-in-anddo-of-ocmock
+                __unsafe_unretained void (^successCallback)(NSString *);
+                [invocation getArgument:&successCallback atIndex:4];
+                successCallback(@"authtoken");
+            }] authenticateWithUsername:[OCMArg any] password:[OCMArg any] success:[OCMArg any] failure:[OCMArg any]];
+            [[wordpressComLoginServiceMock expect] createAccountWithUsername:[OCMArg any] password:[OCMArg any] authToken:[OCMArg any]];
+            [_loginViewModel signIn];
+            [wordpressComLoginServiceMock verify];
+        });
     });
    
     

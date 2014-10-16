@@ -95,18 +95,22 @@
 {
     self.setAuthenticatingBlock(YES, NSLocalizedString(@"Authenticating", nil));
     
+    void (^successCallback)(NSString *) = ^void(NSString *authToken){
+        self.setAuthenticatingBlock(YES, NSLocalizedString(@"Getting account information", nil));
+        WPAccount *account = [self.wordpressComLoginService createAccountWithUsername:self.username password:self.password authToken:authToken];
+#warning Add Blog Syncing
+    };
+    
+    void (^failureCallback)(NSError *) = ^void(NSError *error){
+#warning Display Error Message
+        self.setAuthenticatingBlock(NO, nil);
+        NSLog(@"Failed to get auth token %@", [error localizedDescription]);
+    };
+    
     [self.wordpressComLoginService authenticateWithUsername:self.username
                                                    password:self.password
-                                                    success:^(NSString *authToken){
-                                                        self.setAuthenticatingBlock(NO, nil);
-#warning Flesh this out
-                                                        NSLog(@"AUTH TOKEN %@", authToken);
-                                                    }
-                                                    failure:^(NSError *error){
-#warning Flesh this out
-                                                        self.setAuthenticatingBlock(NO, nil);
-                                                        NSLog(@"Failed to get auth token %@", [error localizedDescription]);
-                                                    }];
+                                                    success:successCallback
+                                                    failure:failureCallback];
 }
 
 - (void)checkIfSiteIsSelfHosted
