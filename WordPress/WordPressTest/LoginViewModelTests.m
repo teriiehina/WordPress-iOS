@@ -24,7 +24,7 @@ beforeEach(^{
     _loginViewModel = [[LoginViewModel alloc] init];
     _loginViewModel.reachabilityService = reachabilityServiceMock;
     _loginViewModel.errorNotifiyingService = errorNotifyingServiceMock;
-    _loginViewModel.wordpressComLoginService = wordpressComLoginServiceMock;
+    _loginViewModel.wordpressLoginService = wordpressComLoginServiceMock;
     _loginViewModel.setAuthenticatingBlock = ^(BOOL authenticating, NSString *message) {};
 });
 

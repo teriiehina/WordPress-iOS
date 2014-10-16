@@ -4,7 +4,7 @@
 
 @protocol ReachabilityServiceProtocol;
 @protocol ErrorNotifyingServiceProtocol;
-@protocol WordPressComLoginServiceProtocol;
+@protocol WordPressLoginServiceProtocol;
 
 @interface LoginViewModel : NSObject
 
@@ -20,7 +20,7 @@
 // Services
 @property (nonatomic, strong) id<ReachabilityServiceProtocol> reachabilityService;
 @property (nonatomic, strong) id<ErrorNotifyingServiceProtocol> errorNotifiyingService;
-@property (nonatomic, strong) id<WordPressComLoginServiceProtocol> wordpressComLoginService;
+@property (nonatomic, strong) id<WordPressLoginServiceProtocol> wordpressLoginService;
 
 // Callbacks
 @property (nonatomic, copy) void (^setAuthenticatingBlock)(BOOL authenticating, NSString * message);

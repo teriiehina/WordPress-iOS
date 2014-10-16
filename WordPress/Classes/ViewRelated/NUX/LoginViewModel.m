@@ -26,7 +26,7 @@
     NSAssert(self.reachabilityService !=  nil, @"");
     NSAssert(self.errorNotifiyingService !=  nil, @"");
     NSAssert(self.setAuthenticatingBlock != nil, @"");
-    NSAssert(self.wordpressComLoginService != nil, @"");
+    NSAssert(self.wordpressLoginService != nil, @"");
 }
 
 - (void)setup
@@ -97,7 +97,7 @@
     
     void (^successCallback)(NSString *) = ^void(NSString *authToken){
         self.setAuthenticatingBlock(YES, NSLocalizedString(@"Getting account information", nil));
-        WPAccount *account = [self.wordpressComLoginService createAccountWithUsername:self.username password:self.password authToken:authToken];
+        WPAccount *account = [self.wordpressLoginService createAccountWithUsername:self.username password:self.password authToken:authToken];
 #warning Add Blog Syncing
     };
     
@@ -107,7 +107,7 @@
         NSLog(@"Failed to get auth token %@", [error localizedDescription]);
     };
     
-    [self.wordpressComLoginService authenticateWithUsername:self.username
+    [self.wordpressLoginService authenticateWithUsername:self.username
                                                    password:self.password
                                                     success:successCallback
                                                     failure:failureCallback];

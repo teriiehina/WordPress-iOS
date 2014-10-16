@@ -95,7 +95,7 @@ CGFloat const GeneralWalkthroughStatusBarOffset = 20.0;
     _viewModel = [[LoginViewModel alloc] init];
     _viewModel.errorNotifiyingService = [ErrorNotifyingService new];
     _viewModel.reachabilityService = [ReachabilityService new];
-    _viewModel.wordpressComLoginService = [WordPressComLoginService new];
+    _viewModel.wordpressLoginService = [WordPressComLoginService new];
     
     __weak __typeof(self)weakSelf = self;
     _viewModel.setAuthenticatingBlock = ^(BOOL authenticating, NSString *message) {

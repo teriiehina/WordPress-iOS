@@ -1,7 +1,7 @@
 #import <Foundation/Foundation.h>
 
 @class WPAccount;
-@protocol WordPressComLoginServiceProtocol<NSObject>
+@protocol WordPressLoginServiceProtocol<NSObject>
 
 - (void)authenticateWithUsername:(NSString *)username
                         password:(NSString *)password
@@ -13,6 +13,6 @@
 
 @end
 
-@interface WordPressComLoginService : NSObject<WordPressComLoginServiceProtocol>
+@interface WordPressComLoginService : NSObject<WordPressLoginServiceProtocol>
 
 @end
