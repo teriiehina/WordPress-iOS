@@ -863,11 +863,13 @@ CGFloat const GeneralWalkthroughStatusBarOffset = 20.0;
         } failure:^(NSError *error){
             [self setAuthenticating:NO withStatusMessage:nil];
             [self displayRemoteError:error];
+            [WPAnalytics track:WPAnalyticsStatLoginFailed withProperties:@{ @"login_source" : @"self-hosted" }];
         }];
     };
 
     void (^guessXMLRPCURLFailure)(NSError *) = ^(NSError *error){
         [self handleGuessXMLRPCURLFailure:error];
+        [WPAnalytics track:WPAnalyticsStatLoginFailedToGuessXMLRPC];
     };
 
     [WordPressXMLRPCApi guessXMLRPCURLForSite:_siteUrlText.text success:guessXMLRPCURLSuccess failure:guessXMLRPCURLFailure];
@@ -887,6 +889,7 @@ CGFloat const GeneralWalkthroughStatusBarOffset = 20.0;
                              } failure:^(NSError *error) {
                                  [self setAuthenticating:NO withStatusMessage:nil];
                                  [self displayRemoteError:error];
+                                 [WPAnalytics track:WPAnalyticsStatLoginFailed withProperties:@{ @"login_source" : @"dotcom" }];
                              }];
 }
 
