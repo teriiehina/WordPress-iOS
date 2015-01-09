@@ -727,7 +727,7 @@ static NSTimeInterval NotificationsSyncTimeout          = 10;
 
 - (void)appbotPromptDidntLike
 {
-    [AppRatingUtility doesntLikeCurrentVersion];
+    [AppRatingUtility dislikedCurrentVersion];
     [WPAnalytics track:WPAnalyticsStatAppReviewsDidntLikeApp];
 }
 
