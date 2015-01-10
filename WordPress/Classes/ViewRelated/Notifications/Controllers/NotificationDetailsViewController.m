@@ -130,7 +130,7 @@ static NSInteger NotificationSectionCount               = 1;
                                                  name:NSManagedObjectContextObjectsDidChangeNotification
                                                object:context];
 
-    [AppRatingUtility incrementSignificantEvent];
+    [AppRatingUtility incrementSignificantEventForSection:@"Notifications"];
 }
 
 - (void)viewWillAppear:(BOOL)animated
