@@ -364,18 +364,18 @@ static NSString * const kUsageTrackingDefaultsKey               = @"usage_tracki
 
     // Let the app finish any uploads that are in progress
     UIApplication *app = [UIApplication sharedApplication];
-    if (_bgTask != UIBackgroundTaskInvalid) {
+    if (self.bgTask != UIBackgroundTaskInvalid) {
         [app endBackgroundTask:_bgTask];
-        _bgTask = UIBackgroundTaskInvalid;
+        self.bgTask = UIBackgroundTaskInvalid;
     }
 
-    _bgTask = [app beginBackgroundTaskWithExpirationHandler:^{
+    self.bgTask = [app beginBackgroundTaskWithExpirationHandler:^{
         // Synchronize the cleanup call on the main thread in case
         // the task actually finishes at around the same time.
         dispatch_async(dispatch_get_main_queue(), ^{
             if (_bgTask != UIBackgroundTaskInvalid) {
                 [app endBackgroundTask:_bgTask];
-                _bgTask = UIBackgroundTaskInvalid;
+                self.bgTask = UIBackgroundTaskInvalid;
             }
         });
     }];

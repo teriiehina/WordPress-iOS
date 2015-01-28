@@ -733,10 +733,11 @@ static void *ProgressObserverContext = &ProgressObserverContext;
         self.post.mt_text_more = @"";
     }
 
-    if ( self.post.original.password != nil ) { //original post was password protected
-        if ( self.post.password == nil || [self.post.password isEqualToString:@""] ) { //removed the password
-            self.post.password = @"";
-        }
+    if ( self.post.original.password != nil && //original post was password protected
+         ( self.post.password == nil || [self.post.password isEqualToString:@""] ) //removed the password
+       )
+    {
+        self.post.password = @"";
     }
 
     [self.post save];
@@ -975,10 +976,8 @@ static void *ProgressObserverContext = &ProgressObserverContext;
             [self savePost:YES];
         }
         _failedMediaAlertView = nil;
-    } else if (alertView.tag == EditPostViewControllerAlertTagSwitchBlogs) {
-        if (buttonIndex == 1) {
-            [self showBlogSelector];
-        }
+    } else if (alertView.tag == EditPostViewControllerAlertTagSwitchBlogs && buttonIndex == 1) {
+        [self showBlogSelector];    
     } else if (alertView.tag == EditPostViewControllerAlertCancelMediaUpload) {
         if (buttonIndex == 1) {
             [self cancelMediaUploads];
