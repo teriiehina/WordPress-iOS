@@ -172,7 +172,7 @@ static ContextManager *instance;
     [self migrateDataModelsIfNecessary];
 
     // Attempt to open the store
-    _migrationFailed = NO;
+    self.migrationFailed = NO;
     
     NSURL *storeURL = self.storeURL;
 
@@ -193,7 +193,7 @@ static ContextManager *instance;
                                                            error:&error]) {
         DDLogError(@"Error opening the database. %@\nDeleting the file and trying again", error);
 
-        _migrationFailed = YES;
+        self.migrationFailed = YES;
         
         // make a backup of the old database
         [[NSFileManager defaultManager] copyItemAtPath:storeURL.path

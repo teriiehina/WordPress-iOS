@@ -1843,7 +1843,7 @@ static void *ProgressObserverContext = &ProgressObserverContext;
 #pragma mark - ActionSheet Delegate Methods
 
 - (void)willPresentActionSheet:(UIActionSheet *)actionSheet {
-    _currentActionSheet = actionSheet;
+    self.currentActionSheet = actionSheet;
 }
 
 - (void)actionSheet:(UIActionSheet *)actionSheet didDismissWithButtonIndex:(NSInteger)buttonIndex {
