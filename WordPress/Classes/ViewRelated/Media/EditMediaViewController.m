@@ -65,16 +65,16 @@ static NSUInteger const AlertDiscardChanges = 500;
 {
     [super viewDidLoad];
 
-    _showingEditFields = NO;
+    self.showingEditFields = NO;
 
     self.title = NSLocalizedString(@"Edit Media", nil);
-    _editFieldsScrollView.contentSize = CGSizeMake(_editFieldsScrollView.frame.size.width, CGRectGetMaxY(_editFieldsContainer.frame));
+    self.editFieldsScrollView.contentSize = CGSizeMake(_editFieldsScrollView.frame.size.width, CGRectGetMaxY(_editFieldsContainer.frame));
     [_editFieldsScrollView addSubview:_editFieldsContainer];
 
     UITapGestureRecognizer *doubleTap = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(imageDoubleTapped:)];
     doubleTap.delegate = self;
     doubleTap.numberOfTapsRequired = 2;
-    [_mediaImageview addGestureRecognizer:doubleTap];
+    [self.mediaImageview addGestureRecognizer:doubleTap];
 
     UITapGestureRecognizer *singleTap = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(imageTapped:)];
     singleTap.delegate = self;

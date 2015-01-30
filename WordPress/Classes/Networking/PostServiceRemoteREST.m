@@ -247,8 +247,8 @@
 - (NSArray *)metadataForPost:(RemotePost *)post {
     NSMutableArray *metadata = [NSMutableArray arrayWithCapacity:post.metadata.count];
     for (NSDictionary *meta in post.metadata) {
-        NSNumber *metaID = [meta objectForKey:@"id"];
-        NSString *metaValue = [meta objectForKey:@"value"];
+        NSNumber *metaID = meta[@"id"];
+        NSString *metaValue = meta[@"value"];
         NSString *operation = @"update";
         if (metaID && !metaValue) {
             operation = @"delete";
