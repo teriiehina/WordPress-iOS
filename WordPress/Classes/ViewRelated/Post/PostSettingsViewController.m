@@ -406,7 +406,7 @@ static NSString *const TableViewProgressCellIdentifier = @"TableViewProgressCell
 
     if (sectionId == PostSettingsSectionFeaturedImage) {
         if (self.featuredImage) {
-            CGFloat cellMargins = (2 * PostFeaturedImageCellMargin);
+            CGFloat cellMargins = 2 * PostFeaturedImageCellMargin;
             CGFloat imageWidth = self.featuredImage.size.width;
             CGFloat imageHeight = self.featuredImage.size.height;
             width = width - cellMargins;
@@ -1065,7 +1065,7 @@ static NSString *const TableViewProgressCellIdentifier = @"TableViewProgressCell
     self.isUploadingMedia = YES;
     // On iOS7 the image picker seems to override our preferred setting so we force the status bar color back.
     [[UIApplication sharedApplication] setStatusBarStyle:UIStatusBarStyleLightContent];
-    NSURL *assetURL = [info objectForKey:UIImagePickerControllerReferenceURL];
+    NSURL *assetURL = info[UIImagePickerControllerReferenceURL];
     ALAssetsLibrary *assetsLibrary = [[ALAssetsLibrary alloc] init];
     [assetsLibrary assetForURL:assetURL resultBlock:^(ALAsset *asset){
         NSProgress * convertingProgress = [NSProgress progressWithTotalUnitCount:1];

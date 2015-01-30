@@ -1184,8 +1184,8 @@ static NSString * const kUsageTrackingDefaultsKey               = @"usage_tracki
 
 - (void)toggleExtraDebuggingIfNeeded
 {
-    if (!_listeningForBlogChanges) {
-        _listeningForBlogChanges = YES;
+    if (!self.listeningForBlogChanges) {
+        self.listeningForBlogChanges = YES;
         [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(handleDefaultAccountChangedNotification:) name:WPAccountDefaultWordPressComAccountChangedNotification object:nil];
     }
 
