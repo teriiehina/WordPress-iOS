@@ -404,15 +404,13 @@ static NSString *const TableViewProgressCellIdentifier = @"TableViewProgressCell
         return ceilf(width * 0.75f);
     }
 
-    if (sectionId == PostSettingsSectionFeaturedImage) {
-        if (self.featuredImage) {
-            CGFloat cellMargins = 2 * PostFeaturedImageCellMargin;
-            CGFloat imageWidth = self.featuredImage.size.width;
-            CGFloat imageHeight = self.featuredImage.size.height;
-            width = width - cellMargins;
-            CGFloat height = ceilf((width / imageWidth) * imageHeight);
-            return height + cellMargins;
-        }
+    if (sectionId == PostSettingsSectionFeaturedImage && self.featuredImage) {
+        CGFloat cellMargins = 2 * PostFeaturedImageCellMargin;
+        CGFloat imageWidth = self.featuredImage.size.width;
+        CGFloat imageHeight = self.featuredImage.size.height;
+        width = width - cellMargins;
+        CGFloat height = ceilf((width / imageWidth) * imageHeight);
+        return height + cellMargins;
     }
 
     if (sectionId == PostSettingsSectionMeta) {

@@ -42,11 +42,11 @@
     self = [self initWithStyle:UITableViewStyleGrouped];
 
     if (self) {
-        self.title = [dictionary objectForKey:@"Title"];
-        self.titles = [dictionary objectForKey:@"Titles"];
-        self.values = [dictionary objectForKey:@"Values"];
-        self.defaultValue = [dictionary objectForKey:@"DefaultValue"];
-        self.currentValue = [dictionary objectForKey:@"CurrentValue"];
+        self.title = dictionary[@"Title"];
+        self.titles = dictionary[@"Titles"];
+        self.values = dictionary[@"Values"];
+        self.defaultValue = dictionary[@"DefaultValue"];
+        self.currentValue = dictionary[@"CurrentValue"];
 
         if (self.currentValue == nil) {
             self.currentValue = self.defaultValue;
